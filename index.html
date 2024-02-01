@@ -56,7 +56,6 @@
 
   if(localStorage.getItem('consentMode') === null) {
     document.getElementById('btn-accept-all').addEventListener('click', function() {
-      console.log('is this running?')
       setConsent({
         necessary: true,
         analytics: true,
