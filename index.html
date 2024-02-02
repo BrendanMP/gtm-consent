@@ -94,16 +94,6 @@
     hideBanner();
   });
 
-  // If user has consented with initial cookie banner
-  if (document.cookie.indexOf('ptusa_accepted_cookies=true')) {
-    setConsent({
-      necessary: true,
-      analytics: true,
-      preferences: true,
-      marketing: true
-    });
-  }
-
   // If user has consented with gtm consent mode
   if (localStorage.getItem('consentMode')) {
     hideBanner();
