@@ -61,6 +61,7 @@
   }
 
   function setConsent(consent) {
+    console.log('setting consent', consent)
     const consentMode = {
       'functionality_storage': consent.necessary ? 'granted' : 'denied',
       'security_storage': consent.necessary ? 'granted' : 'denied',
