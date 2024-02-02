@@ -10,9 +10,18 @@
   <script>
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
-    gtag('consent', 'default', {
-      'analytics_storage': 'denied'
-    });
+
+    if(localStorage.getItem('consentMode') === null){
+      gtag('consent', 'default', {
+        'ad_storage': 'denied',
+        'analytics_storage': 'denied',
+        'personalization_storage': 'denied',
+        'functionality_storage': 'denied',
+        'security_storage': 'denied',
+      });
+    } else {
+      gtag('consent', 'default', JSON.parse(localStorage.getItem('consentMode')));
+    }
   </script>
 
   <!-- Google Tag Manager -->
@@ -34,8 +43,8 @@
 
 <div class="container py-5">
   <h1>GTM Consent</h1>
-  <p>gtm consent test bed</p>
 </div>
+
 
 <div class="bg-light position-fixed fixed-bottom py-5" id="cookie-consent-banner">
   <div class="container">
@@ -46,34 +55,11 @@
   </div>
 </div>
 
-
-
 <script>
-
   function hideBanner() {
     document.getElementById('cookie-consent-banner').style.display = 'none';
   }
 
-  if(localStorage.getItem('consentMode') === null) {
-    document.getElementById('btn-accept-all').addEventListener('click', function() {
-      setConsent({
-        necessary: true,
-        analytics: true,
-        preferences: true,
-        marketing: true
-      });
-      hideBanner();
-    });
-    document.getElementById('btn-reject-all').addEventListener('click', function() {
-      setConsent({
-        necessary: false,
-        analytics: false,
-        preferences: false,
-        marketing: false
-      });
-      hideBanner();
-    });
-  }
   function setConsent(consent) {
     const consentMode = {
       'functionality_storage': consent.necessary ? 'granted' : 'denied',
@@ -81,9 +67,46 @@
       'ad_storage': consent.marketing ? 'granted' : 'denied',
       'analytics_storage': consent.analytics ? 'granted' : 'denied',
       'personalization': consent.preferences ? 'granted' : 'denied',
+      'wait_for_update': 500
     };
     gtag('consent', 'update', consentMode);
+    dataLayer.push({'event': 'consentUpdated'});
     localStorage.setItem('consentMode', JSON.stringify(consentMode));
+  }
+
+  document.getElementById('btn-accept-all').addEventListener('click', function() {
+    setConsent({
+      necessary: true,
+      analytics: true,
+      preferences: true,
+      marketing: true
+    });
+    hideBanner();
+  });
+
+  document.getElementById('btn-reject-all').addEventListener('click', function() {
+    setConsent({
+      necessary: false,
+      analytics: false,
+      preferences: false,
+      marketing: false
+    });
+    hideBanner();
+  });
+
+  // If user has consented with initial cookie banner
+  if (document.cookie.indexOf('ptusa_accepted_cookies=true')) {
+    setConsent({
+      necessary: true,
+      analytics: true,
+      preferences: true,
+      marketing: true
+    });
+  }
+
+  // If user has consented with gtm consent mode
+  if (localStorage.getItem('consentMode')) {
+    hideBanner();
   }
 
 </script>
